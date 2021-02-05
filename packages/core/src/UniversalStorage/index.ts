@@ -78,16 +78,21 @@ export class UniversalStorage implements Storage {
 			// accessToken is required for CognitoUserSession
 			case 'accessToken':
 
+			// https://github.com/aws-amplify/amplify-js/pull/7374/commits/224e85fef8019dd94b5d941a6a4065683c2d708a
+			// refreshToken originates on the client, but SSR pages won't fail when this expires
+			// Note: the new `accessToken` will also be refreshed on the client (since Amplify doesn't set server-side cookies)
+			case 'refreshToken':
+
+			// https://github.com/aws-amplify/amplify-js/pull/7374/commits/4c65d9445c3fead3298ab96f1eb93a2faedd39f6
 			// Required for CognitoUserSession
 			case 'idToken':
-				this.setUniversalItem(key, value);
+				isBrowser
+					? this.setUniversalItem(key, value)
+					: this.setLocalItem(key, value);
 
 			// userData is used when `Auth.currentAuthenticatedUser({ bypassCache: false })`.
 			// Can be persisted to speed up calls to `Auth.currentAuthenticatedUser()`
 			// case 'userData':
-
-			// refreshToken isn't shared with the server so that the client handles refreshing
-			// case 'refreshToken':
 
 			// Ignoring clockDrift on the server for now, but needs testing
 			// case 'clockDrift':
