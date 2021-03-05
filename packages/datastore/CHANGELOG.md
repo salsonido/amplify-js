@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.9.11](https://github.com/aws-amplify/amplify-js/compare/@aws-amplify/datastore@2.9.10...@aws-amplify/datastore@2.9.11) (2021-03-03)
+
+
+### Bug Fixes
+
+* **@aws-amplify/datastore:** return partial data when available ([#7775](https://github.com/aws-amplify/amplify-js/issues/7775)) ([715aa7e](https://github.com/aws-amplify/amplify-js/commit/715aa7e1d8ea1797784d37ab706c12b133fca4f0))
+
+
+
+
+
+## [2.9.10](https://github.com/aws-amplify/amplify-js/compare/@aws-amplify/datastore@2.9.9...@aws-amplify/datastore@2.9.10) (2021-02-25)
+
+
+### Bug Fixes
+
+* **@aws-amplify/datastore:** improve IDB query performance ([#7746](https://github.com/aws-amplify/amplify-js/issues/7746)) ([5b87ad4](https://github.com/aws-amplify/amplify-js/commit/5b87ad485be5521a3ca91aa7bb00bba178e6c8b9))
+
+
+
+
+
+## [2.9.9](https://github.com/aws-amplify/amplify-js/compare/@aws-amplify/datastore@2.9.8...@aws-amplify/datastore@2.9.9) (2021-02-18)
+
+**Note:** Version bump only for package @aws-amplify/datastore
+
+
+
+
+
+## [2.9.8](https://github.com/aws-amplify/amplify-js/compare/@aws-amplify/datastore@2.9.7...@aws-amplify/datastore@2.9.8) (2021-02-15)
+
+**Note:** Version bump only for package @aws-amplify/datastore
+
+
+
+
+
+## [2.9.7](https://github.com/aws-amplify/amplify-js/compare/@aws-amplify/datastore@2.9.6...@aws-amplify/datastore@2.9.7) (2021-02-09)
+
+
+### Bug Fixes
+
+* **@aws-amplify/datastore:** align AWSTime validation with AppSync ([#7717](https://github.com/aws-amplify/amplify-js/issues/7717)) ([feae503](https://github.com/aws-amplify/amplify-js/commit/feae503ba2ad22738e4a16639441f4dec6077f7a))
+
+
+
+
+
 ## [2.9.6](https://github.com/aws-amplify/amplify-js/compare/@aws-amplify/datastore@2.9.5...@aws-amplify/datastore@2.9.6) (2021-02-03)
 
 **Note:** Version bump only for package @aws-amplify/datastore
