@@ -1,6 +1,14 @@
 import OAuth from '../src/OAuth/OAuth';
 import * as oauthStorage from '../src/OAuth/oauthStorage';
-import { NodeCallback } from 'amazon-cognito-identity-js';
+import {
+	CookieStorage,
+	CognitoUserPool,
+	CognitoUser,
+	CognitoUserSession,
+	CognitoIdToken,
+	CognitoAccessToken,
+	NodeCallback,
+} from 'amazon-cognito-identity-js';
 
 jest.mock('crypto-js/sha256', () => {
 	return {
@@ -222,14 +230,6 @@ jest.mock('amazon-cognito-identity-js/lib/CognitoUser', () => {
 import { AuthOptions, SignUpParams, AwsCognitoOAuthOpts } from '../src/types';
 import { AuthClass as Auth } from '../src/Auth';
 import Cache from '@aws-amplify/cache';
-import {
-	CookieStorage,
-	CognitoUserPool,
-	CognitoUser,
-	CognitoUserSession,
-	CognitoIdToken,
-	CognitoAccessToken,
-} from 'amazon-cognito-identity-js';
 import {
 	Credentials,
 	GoogleOAuth,
@@ -810,6 +810,46 @@ describe('auth unit test', () => {
 					authParameters: {},
 				},
 				authCallbacks
+			);
+			spyon.mockClear();
+		});
+
+		test('happy case validationData parameter', async () => {
+			const spyon = jest.spyOn(CognitoUserPool.prototype, 'signUp');
+			const auth = new Auth(authOptionsWithClientMetadata);
+
+			const attrs: SignUpParams = {
+				username: 'username',
+				password: 'password',
+				attributes: {
+					email: 'email',
+					phone_number: 'phone_number',
+					otherAttrs: 'otherAttrs',
+				},
+				clientMetadata: {
+					custom: 'value',
+				},
+				validationData: {
+					foo: 'bar',
+					test: '123',
+				},
+			};
+			await auth.signUp(attrs);
+
+			expect(await spyon).toBeCalledWith(
+				attrs.username,
+				attrs.password,
+				[
+					{ Name: 'email', Value: 'email' },
+					{ Name: 'phone_number', Value: 'phone_number' },
+					{ Name: 'otherAttrs', Value: 'otherAttrs' },
+				],
+				[
+					{ Name: 'foo', Value: 'bar' },
+					{ Name: 'test', Value: '123' },
+				],
+				jasmine.any(Function),
+				{ custom: 'value' }
 			);
 			spyon.mockClear();
 		});
@@ -3049,7 +3089,7 @@ describe('auth unit test', () => {
 			spyon.mockClear();
 		});
 
-		test('happy case with unverified', async () => {
+		test('happy case with verified', async () => {
 			const spyon = jest
 				.spyOn(Auth.prototype, 'userAttributes')
 				.mockImplementationOnce(() => {
@@ -3070,6 +3110,46 @@ describe('auth unit test', () => {
 							{
 								Name: 'phone_number_verified',
 								Value: true,
+							},
+						]);
+					});
+				});
+
+			const auth = new Auth(authOptions);
+			const user = new CognitoUser({
+				Username: 'username',
+				Pool: userPool,
+			});
+
+			expect(await auth.verifiedContact(user)).toEqual({
+				unverified: {},
+				verified: { email: 'email@amazon.com', phone_number: '+12345678901' },
+			});
+
+			spyon.mockClear();
+		});
+
+		test('happy case with verified as strings', async () => {
+			const spyon = jest
+				.spyOn(Auth.prototype, 'userAttributes')
+				.mockImplementationOnce(() => {
+					return new Promise((res: any, rej) => {
+						res([
+							{
+								Name: 'email',
+								Value: 'email@amazon.com',
+							},
+							{
+								Name: 'phone_number',
+								Value: '+12345678901',
+							},
+							{
+								Name: 'email_verified',
+								Value: 'true',
+							},
+							{
+								Name: 'phone_number_verified',
+								Value: 'True',
 							},
 						]);
 					});
