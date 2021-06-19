@@ -22,6 +22,7 @@ export type UserSchema = {
 	models: SchemaModels;
 	nonModels?: SchemaNonModels;
 	relationships?: RelationshipType;
+	keys?: ModelKeys;
 	enums: SchemaEnums;
 	modelTopologicalOrdering?: Map<string, string[]>;
 };
@@ -75,8 +76,58 @@ export function isTargetNameAssociation(
 	return obj && obj.targetName;
 }
 
-type ModelAttributes = ModelAttribute[];
+export type ModelAttributes = ModelAttribute[];
 type ModelAttribute = { type: string; properties?: Record<string, any> };
+
+type ModelAttributeKey = {
+	type: 'key';
+	properties: {
+		name?: string;
+		fields: string[];
+	};
+};
+
+type ModelAttributePrimaryKey = {
+	type: 'key';
+	properties: {
+		fields: string[];
+	};
+};
+
+type ModelAttributeCompositeKey = {
+	type: 'key';
+	properties: {
+		name: string;
+		fields: [string, string, string, string?, string?];
+	};
+};
+
+export function isModelAttributeKey(
+	attr: ModelAttribute
+): attr is ModelAttributeKey {
+	return (
+		attr.type === 'key' &&
+		attr.properties &&
+		attr.properties.fields &&
+		attr.properties.fields.length > 0
+	);
+}
+
+export function isModelAttributePrimaryKey(
+	attr: ModelAttribute
+): attr is ModelAttributePrimaryKey {
+	return isModelAttributeKey(attr) && attr.properties.name === undefined;
+}
+
+export function isModelAttributeCompositeKey(
+	attr: ModelAttribute
+): attr is ModelAttributeCompositeKey {
+	return (
+		isModelAttributeKey(attr) &&
+		attr.properties.name !== undefined &&
+		attr.properties.fields.length > 2
+	);
+}
 
 export type ModelAttributeAuthProperty = {
 	allow: ModelAttributeAuthAllow;
@@ -514,6 +565,18 @@ export type RelationType = {
 
 export type RelationshipType = {
 	[modelName: string]: { indexes: string[]; relationTypes: RelationType[] };
+};
+
+//#endregion
+
+//#region Key type
+export type KeyType = {
+	primaryKey?: string[];
+	compositeKeys?: Set<string>[];
+};
+
+export type ModelKeys = {
+	[modelName: string]: KeyType;
 };
 
 //#endregion
